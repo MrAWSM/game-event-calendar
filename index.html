@@ -223,6 +223,31 @@ body::before {
   letter-spacing: 1px;
   margin-right: 4px;
 }
+.theme-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 6px 30px 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-family: inherit;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' fill='none' stroke='%23888' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 10px center;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.theme-select:hover {
+  border-color: var(--border-active);
+}
+.theme-select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+.theme-select option {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
 
 /* ===== Buttons ===== */
 .btn {
@@ -740,10 +765,12 @@ body::before {
     <div style="display:flex;align-items:center;gap:8px;">
       <div class="theme-switcher">
         <span class="theme-label">Theme</span>
-        <button class="btn theme-btn" data-theme="arcade-pop" onclick="setTheme('arcade-pop')">Arcade Pop</button>
-        <button class="btn theme-btn" data-theme="dark-terminal" onclick="setTheme('dark-terminal')">Terminal</button>
-        <button class="btn theme-btn" data-theme="clean-console" onclick="setTheme('clean-console')">Console</button>
-        <button class="btn theme-btn" data-theme="retro" onclick="setTheme('retro')">Retro</button>
+        <select id="theme-select" class="theme-select" onchange="setTheme(this.value)">
+          <option value="arcade-pop">Arcade Pop</option>
+          <option value="dark-terminal">Terminal</option>
+          <option value="clean-console">Console</option>
+          <option value="retro">Retro</option>
+        </select>
       </div>
       <button class="settings-btn" onclick="openDrawer()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
@@ -881,13 +908,8 @@ function setTheme(theme) {
   updateThemeButtons();
 }
 function updateThemeButtons() {
-  document.querySelectorAll('.theme-btn').forEach(function(btn) {
-    if (btn.dataset.theme === currentTheme) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
-    }
-  });
+  var sel = document.getElementById('theme-select');
+  if (sel) sel.value = currentTheme;
 }
 
 // ===== Date helpers =====
@@ -1062,7 +1084,7 @@ function renderCalendar() {
     dayEvents.forEach(function(e) {
       html += '<div class="cal-event" onclick="showDetailDirect(\'' + e.gameSlug + '\', \'' + e.title.replace(/'/g, "\\'") + '\')">' +
         '<span class="cal-dot" style="background:' + EVENT_COLORS[e.type] + '"></span>' +
-        '<span class="cal-event-text">' + e.title + '</span>' +
+        '<span class="cal-event-text">' + e.gameName + ': ' + e.title + '</span>' +
       '</div>';
     });
     html += '</div>';
