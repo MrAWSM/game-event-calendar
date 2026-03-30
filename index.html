@@ -4,360 +4,877 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Game Event Calendar</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-tailwind.config = {
-  darkMode: 'class',
-  theme: {
-    extend: {
-      colors: {
-        oled: { bg: '#000000', card: '#0a0a0a', text: '#e0e0e0', muted: '#666666', border: '#1a1a1a' },
-        retro: { bg: '#2b1b17', card: '#3e2723', text: '#ffcc80', muted: '#a1887f', border: '#5d4037', accent: '#ff6f00' }
-      }
-    }
-  }
-};
-</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  /* Theme: OLED */
-  .theme-oled { background-color: #000; color: #e0e0e0; }
-  .theme-oled .card { background-color: #0a0a0a; border-color: #1a1a1a; }
-  .theme-oled .card-hover:hover { background-color: #111; }
-  .theme-oled .muted { color: #666; }
-  .theme-oled .surface { background-color: #050505; }
-  .theme-oled .btn-inactive { background-color: #111; color: #888; border-color: #222; }
-  .theme-oled .btn-active { background-color: #1a1a1a; color: #fff; border-color: #333; }
-  .theme-oled .header-bg { background-color: #000; border-color: #111; }
+/* ===== CSS Reset ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { line-height: 1.5; -webkit-font-smoothing: antialiased; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
+button { cursor: pointer; font: inherit; border: none; background: none; }
+a { color: inherit; text-decoration: none; }
+img, svg { display: block; max-width: 100%; }
 
-  /* Theme: Retro */
-  .theme-retro { background-color: #2b1b17; color: #ffcc80; }
-  .theme-retro .card { background-color: #3e2723; border-color: #5d4037; }
-  .theme-retro .card-hover:hover { background-color: #4e342e; }
-  .theme-retro .muted { color: #a1887f; }
-  .theme-retro .surface { background-color: #321f1a; }
-  .theme-retro .btn-inactive { background-color: #3e2723; color: #a1887f; border-color: #5d4037; }
-  .theme-retro .btn-active { background-color: #5d4037; color: #ffcc80; border-color: #8d6e63; }
-  .theme-retro .header-bg { background-color: #2b1b17; border-color: #5d4037; }
-  .theme-retro * { font-family: 'Courier New', monospace !important; }
+/* ===== Theme Variables ===== */
 
-  /* Theme: Light */
-  .theme-light { background-color: #f8fafc; color: #1e293b; }
-  .theme-light .card { background-color: #fff; border-color: #e2e8f0; }
-  .theme-light .card-hover:hover { background-color: #f1f5f9; }
-  .theme-light .muted { color: #64748b; }
-  .theme-light .surface { background-color: #f1f5f9; }
-  .theme-light .btn-inactive { background-color: #f1f5f9; color: #64748b; border-color: #e2e8f0; }
-  .theme-light .btn-active { background-color: #e2e8f0; color: #1e293b; border-color: #cbd5e1; }
-  .theme-light .header-bg { background-color: #fff; border-color: #e2e8f0; }
+/* Arcade Pop */
+[data-theme="arcade-pop"] {
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'Space Mono', monospace;
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-card: #1f2b47;
+  --bg-card-hover: #263455;
+  --bg-surface: #141c30;
+  --bg-header: #12182b;
+  --text-primary: #f0e6ff;
+  --text-secondary: #b8a9d4;
+  --text-muted: #7a6b99;
+  --border-color: #2d3a5c;
+  --border-active: #4a3f7a;
+  --accent-primary: #ff006e;
+  --accent-secondary: #00f5ff;
+  --accent-tertiary: #ffbe0b;
+  --btn-inactive-bg: #1f2b47;
+  --btn-inactive-text: #7a6b99;
+  --btn-inactive-border: #2d3a5c;
+  --btn-active-bg: #ff006e;
+  --btn-active-text: #fff;
+  --btn-active-border: #ff006e;
+  --hero-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #1a1a2e 70%, #1f1040 100%);
+  --hero-texture: radial-gradient(ellipse at 20% 50%, rgba(255, 0, 110, 0.08) 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 20%, rgba(0, 245, 255, 0.06) 0%, transparent 50%),
+                  radial-gradient(ellipse at 60% 80%, rgba(255, 190, 11, 0.05) 0%, transparent 50%);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 20px rgba(255, 0, 110, 0.15);
+}
 
-  /* Theme: Dark (default) */
-  .theme-dark { background-color: #0f172a; color: #e2e8f0; }
-  .theme-dark .card { background-color: #1e293b; border-color: #334155; }
-  .theme-dark .card-hover:hover { background-color: #253349; }
-  .theme-dark .muted { color: #94a3b8; }
-  .theme-dark .surface { background-color: #1e293b; }
-  .theme-dark .btn-inactive { background-color: #1e293b; color: #94a3b8; border-color: #334155; }
-  .theme-dark .btn-active { background-color: #334155; color: #e2e8f0; border-color: #475569; }
-  .theme-dark .header-bg { background-color: #0f172a; border-color: #1e293b; }
+/* Dark Terminal */
+[data-theme="dark-terminal"] {
+  --font-display: 'IBM Plex Mono', monospace;
+  --font-body: 'Inter', sans-serif;
+  --bg-primary: #0a0e27;
+  --bg-secondary: #0d1230;
+  --bg-card: #111738;
+  --bg-card-hover: #161d45;
+  --bg-surface: #080c20;
+  --bg-header: #070a1c;
+  --text-primary: #c8f7dc;
+  --text-secondary: #7ec8a0;
+  --text-muted: #3d7a5a;
+  --border-color: #1a2548;
+  --border-active: #00ff9f;
+  --accent-primary: #00ff9f;
+  --accent-secondary: #00d4ff;
+  --accent-tertiary: #ff006e;
+  --btn-inactive-bg: #111738;
+  --btn-inactive-text: #3d7a5a;
+  --btn-inactive-border: #1a2548;
+  --btn-active-bg: transparent;
+  --btn-active-text: #00ff9f;
+  --btn-active-border: #00ff9f;
+  --hero-gradient: linear-gradient(180deg, #0a0e27 0%, #0d1230 100%);
+  --hero-texture: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 159, 0.015) 2px, rgba(0, 255, 159, 0.015) 4px),
+                  radial-gradient(ellipse at 50% 0%, rgba(0, 212, 255, 0.06) 0%, transparent 60%);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 15px rgba(0, 255, 159, 0.1);
+}
 
-  /* Event type colors — consistent across all themes */
-  .event-major_update { border-left: 4px solid #3b82f6; }
-  .event-major_update .event-badge { background-color: #3b82f6; color: #fff; }
-  .event-new_season { border-left: 4px solid #22c55e; }
-  .event-new_season .event-badge { background-color: #22c55e; color: #fff; }
-  .event-in_game_event { border-left: 4px solid #f97316; }
-  .event-in_game_event .event-badge { background-color: #f97316; color: #fff; }
-  .event-dlc_release { border-left: 4px solid #a855f7; }
-  .event-dlc_release .event-badge { background-color: #a855f7; color: #fff; }
+/* Clean Console */
+[data-theme="clean-console"] {
+  --font-display: 'Poppins', sans-serif;
+  --font-body: 'Roboto', sans-serif;
+  --bg-primary: #f8f9fa;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f3f5;
+  --bg-surface: #f1f3f5;
+  --bg-header: #ffffff;
+  --text-primary: #1a1a1a;
+  --text-secondary: #495057;
+  --text-muted: #868e96;
+  --border-color: #dee2e6;
+  --border-active: #0066ff;
+  --accent-primary: #0066ff;
+  --accent-secondary: #ff3366;
+  --accent-tertiary: #0066ff;
+  --btn-inactive-bg: #f1f3f5;
+  --btn-inactive-text: #868e96;
+  --btn-inactive-border: #dee2e6;
+  --btn-active-bg: #0066ff;
+  --btn-active-text: #fff;
+  --btn-active-border: #0066ff;
+  --hero-gradient: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+  --hero-texture: none;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-glow: none;
+}
 
-  .expand-enter { animation: expandIn 0.2s ease-out; }
-  @keyframes expandIn { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 200px; } }
+/* Retro */
+[data-theme="retro"] {
+  --font-display: 'Courier New', monospace;
+  --font-body: 'Courier New', monospace;
+  --bg-primary: #2b1b17;
+  --bg-secondary: #321f1a;
+  --bg-card: #3e2723;
+  --bg-card-hover: #4e342e;
+  --bg-surface: #321f1a;
+  --bg-header: #2b1b17;
+  --text-primary: #ffcc80;
+  --text-secondary: #bcaaa4;
+  --text-muted: #a1887f;
+  --border-color: #5d4037;
+  --border-active: #ff6f00;
+  --accent-primary: #ff6f00;
+  --accent-secondary: #ffcc80;
+  --accent-tertiary: #ff6f00;
+  --btn-inactive-bg: #3e2723;
+  --btn-inactive-text: #a1887f;
+  --btn-inactive-border: #5d4037;
+  --btn-active-bg: #5d4037;
+  --btn-active-text: #ffcc80;
+  --btn-active-border: #8d6e63;
+  --hero-gradient: linear-gradient(180deg, #2b1b17 0%, #3e2723 100%);
+  --hero-texture: repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255, 204, 128, 0.03) 1px, rgba(255, 204, 128, 0.03) 2px);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-glow: none;
+}
 
-  /* Calendar grid */
-  .cal-day { min-height: 80px; }
-  .cal-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+/* ===== Event Type Colors ===== */
+:root {
+  --color-major-update: #3b82f6;
+  --color-new-season: #22c55e;
+  --color-in-game-event: #f97316;
+  --color-dlc-release: #a855f7;
+}
+
+/* ===== Base Styles ===== */
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-primary);
+  background-image: var(--hero-gradient);
+  color: var(--text-primary);
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: var(--hero-texture);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ===== Layout ===== */
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 16px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== Header ===== */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: var(--bg-header);
+  border-bottom: 1px solid var(--border-color);
+  padding: 12px 16px;
+  backdrop-filter: blur(8px);
+}
+.header-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.header-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--text-primary);
+}
+[data-theme="arcade-pop"] .header-title {
+  font-size: 2rem;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, #ff006e, #00f5ff, #ffbe0b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+[data-theme="dark-terminal"] .header-title {
+  color: #00ff9f;
+  text-shadow: 0 0 10px rgba(0, 255, 159, 0.3);
+}
+.theme-switcher {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.theme-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-right: 4px;
+}
+
+/* ===== Buttons ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: 6px;
+  border: 1px solid var(--btn-inactive-border);
+  background: var(--btn-inactive-bg);
+  color: var(--btn-inactive-text);
+  transition: all 0.15s ease;
+}
+.btn:hover {
+  opacity: 0.85;
+}
+.btn.active {
+  background: var(--btn-active-bg);
+  color: var(--btn-active-text);
+  border-color: var(--btn-active-border);
+}
+[data-theme="dark-terminal"] .btn.active {
+  box-shadow: 0 0 8px rgba(0, 255, 159, 0.2);
+}
+[data-theme="arcade-pop"] .btn.active {
+  box-shadow: 0 0 10px rgba(255, 0, 110, 0.3);
+}
+
+/* ===== Sections ===== */
+.section {
+  margin-bottom: 32px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 10px;
+}
+.section-heading {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+[data-theme="arcade-pop"] .section-heading {
+  font-size: 1.6rem;
+  letter-spacing: 1px;
+}
+
+/* ===== Filter/Game pills ===== */
+.pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ===== Empty State ===== */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+}
+.empty-state-icon {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+  opacity: 0.5;
+}
+.empty-state-text {
+  font-size: 0.9rem;
+}
+.empty-state-sub {
+  font-size: 0.8rem;
+  margin-top: 4px;
+  opacity: 0.7;
+}
+
+/* ===== Event Cards ===== */
+.event-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s, box-shadow 0.15s;
+  box-shadow: var(--shadow-card);
+}
+.event-card:hover {
+  background: var(--bg-card-hover);
+  box-shadow: var(--shadow-glow);
+}
+.event-card[data-type="major_update"] { border-left: 4px solid var(--color-major-update); }
+.event-card[data-type="new_season"] { border-left: 4px solid var(--color-new-season); }
+.event-card[data-type="in_game_event"] { border-left: 4px solid var(--color-in-game-event); }
+.event-card[data-type="dlc_release"] { border-left: 4px solid var(--color-dlc-release); }
+
+.event-card-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.event-card-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+.event-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+.event-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.event-badge[data-type="major_update"] { background: var(--color-major-update); }
+.event-badge[data-type="new_season"] { background: var(--color-new-season); }
+.event-badge[data-type="in_game_event"] { background: var(--color-in-game-event); }
+.event-badge[data-type="dlc_release"] { background: var(--color-dlc-release); }
+
+.event-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.event-game {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.event-countdown {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+.event-date-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+.event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ===== Calendar ===== */
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.calendar-legend {
+  display: flex;
+  gap: 16px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.cal-header-cell {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 4px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.cal-day {
+  min-height: 72px;
+  padding: 4px 6px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-card);
+  transition: background-color 0.15s;
+}
+.cal-day.today {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: -1px;
+}
+.cal-day.outside {
+  background: var(--bg-surface);
+  opacity: 0.4;
+}
+.cal-day-number {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+.cal-day.today .cal-day-number {
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+.cal-event {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.65rem;
+  cursor: pointer;
+  padding: 1px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cal-event:hover { opacity: 0.75; }
+.cal-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.cal-event-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===== Detail Modal ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.open { display: flex; }
+.modal-content {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  max-width: 460px;
+  width: calc(100% - 32px);
+  padding: 24px;
+  position: relative;
+}
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+}
+.modal-close:hover { opacity: 0.7; }
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  padding-right: 30px;
+}
+.modal-icon {
+  width: 36px;
+  height: 36px;
+  margin-bottom: 12px;
+}
+.modal-meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+.modal-countdown {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.modal-confirmed {
+  font-size: 0.75rem;
+  margin-bottom: 12px;
+}
+.modal-confirmed.yes { color: #22c55e; }
+.modal-confirmed.no { color: #f59e0b; }
+.modal-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.modal-link {
+  display: inline-block;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: var(--accent-primary);
+  color: #fff;
+  transition: opacity 0.15s;
+}
+.modal-link:hover { opacity: 0.85; }
+[data-theme="clean-console"] .modal-link { color: #fff; }
+
+/* ===== Responsive ===== */
+@media (max-width: 640px) {
+  .event-card { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .event-card-right { text-align: left; }
+  .calendar-grid { gap: 2px; }
+  .cal-day { min-height: 56px; padding: 3px 4px; }
+  .cal-event { font-size: 0.55rem; }
+  .header-title { font-size: 1.2rem; }
+  [data-theme="arcade-pop"] .header-title { font-size: 1.4rem; }
+}
 </style>
 </head>
-<body class="theme-dark min-h-screen transition-colors duration-200">
+<body data-theme="arcade-pop">
 
 <!-- Header -->
-<header class="header-bg border-b sticky top-0 z-50 px-4 py-3">
-  <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-    <h1 class="text-xl font-bold tracking-tight">Game Event Calendar</h1>
-    <div class="flex items-center gap-2">
-      <span class="muted text-xs mr-1">Theme:</span>
-      <button onclick="setTheme('dark')" class="theme-btn px-2 py-1 text-xs rounded border" data-theme="dark">Dark</button>
-      <button onclick="setTheme('light')" class="theme-btn px-2 py-1 text-xs rounded border" data-theme="light">Light</button>
-      <button onclick="setTheme('oled')" class="theme-btn px-2 py-1 text-xs rounded border" data-theme="oled">OLED</button>
-      <button onclick="setTheme('retro')" class="theme-btn px-2 py-1 text-xs rounded border" data-theme="retro">Retro</button>
+<header class="header">
+  <div class="header-inner">
+    <h1 class="header-title">Game Event Calendar</h1>
+    <div class="theme-switcher">
+      <span class="theme-label">Theme</span>
+      <button class="btn theme-btn" data-theme="arcade-pop" onclick="setTheme('arcade-pop')">Arcade Pop</button>
+      <button class="btn theme-btn" data-theme="dark-terminal" onclick="setTheme('dark-terminal')">Terminal</button>
+      <button class="btn theme-btn" data-theme="clean-console" onclick="setTheme('clean-console')">Console</button>
+      <button class="btn theme-btn" data-theme="retro" onclick="setTheme('retro')">Retro</button>
     </div>
   </div>
 </header>
 
-<main class="max-w-7xl mx-auto px-4 py-6">
+<main class="container" style="padding-top: 24px; padding-bottom: 48px;">
 
   <!-- Platform filters -->
-  <section class="mb-4">
-    <h2 class="text-sm font-semibold muted mb-2 uppercase tracking-wider">Platforms</h2>
-    <div class="flex flex-wrap gap-2" id="platform-filters"></div>
+  <section class="section">
+    <h2 class="section-title">Platforms</h2>
+    <div class="pill-group" id="platform-filters"></div>
   </section>
 
   <!-- Game picker -->
-  <section class="mb-6">
-    <h2 class="text-sm font-semibold muted mb-2 uppercase tracking-wider">Games</h2>
-    <div class="flex flex-wrap gap-2" id="game-picker"></div>
+  <section class="section">
+    <h2 class="section-title">Games</h2>
+    <div class="pill-group" id="game-picker"></div>
   </section>
 
   <!-- This Week -->
-  <section class="mb-8">
-    <h2 class="text-lg font-bold mb-3">This Week</h2>
-    <div id="this-week" class="grid gap-2"></div>
-    <p id="this-week-empty" class="muted text-sm hidden">No events this week.</p>
+  <section class="section">
+    <h2 class="section-heading">This Week</h2>
+    <div id="this-week" class="event-list"></div>
+    <div id="this-week-empty" class="empty-state" style="display:none;">
+      <div class="empty-state-icon">&#127918;</div>
+      <div class="empty-state-text">No events this week</div>
+      <div class="empty-state-sub">Select some games above to see upcoming events</div>
+    </div>
   </section>
 
   <!-- Calendar -->
-  <section>
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="text-lg font-bold">60-Day Calendar</h2>
-      <div class="flex gap-3 text-xs muted">
-        <span class="flex items-center gap-1"><span class="cal-dot" style="background:#3b82f6"></span> Update</span>
-        <span class="flex items-center gap-1"><span class="cal-dot" style="background:#22c55e"></span> Season</span>
-        <span class="flex items-center gap-1"><span class="cal-dot" style="background:#f97316"></span> Event</span>
-        <span class="flex items-center gap-1"><span class="cal-dot" style="background:#a855f7"></span> DLC</span>
+  <section class="section">
+    <div class="calendar-header">
+      <h2 class="section-heading" style="margin-bottom:0">60-Day Calendar</h2>
+      <div class="calendar-legend">
+        <span class="legend-item"><span class="legend-dot" style="background:var(--color-major-update)"></span> Update</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--color-new-season)"></span> Season</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--color-in-game-event)"></span> Event</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--color-dlc-release)"></span> DLC</span>
       </div>
     </div>
-    <div id="calendar" class="grid grid-cols-7 gap-1"></div>
+    <div id="calendar" class="calendar-grid"></div>
   </section>
 
-  <!-- Event detail panel -->
-  <div id="detail-panel" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50" onclick="closeDetail(event)">
-    <div class="card border rounded-lg shadow-xl max-w-md w-full mx-4 p-6" onclick="event.stopPropagation()">
-      <div class="flex items-start justify-between mb-3">
-        <h3 id="detail-title" class="text-lg font-bold"></h3>
-        <button onclick="closeDetail()" class="muted hover:opacity-70 text-xl leading-none">&times;</button>
-      </div>
-      <div id="detail-badge" class="mb-3"></div>
-      <p id="detail-game" class="text-sm muted mb-1"></p>
-      <p id="detail-date" class="text-sm muted mb-1"></p>
-      <p id="detail-countdown" class="text-sm font-semibold mb-3"></p>
-      <p id="detail-confirmed" class="text-xs mb-3"></p>
-      <p id="detail-desc" class="text-sm mb-4"></p>
-      <a id="detail-link" href="#" target="_blank" rel="noopener" class="hidden inline-block px-4 py-2 rounded text-sm font-medium bg-blue-600 text-white hover:bg-blue-700">View Details &rarr;</a>
-    </div>
-  </div>
 </main>
 
+<!-- Detail Modal -->
+<div id="detail-panel" class="modal-overlay" onclick="closeDetail(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeDetail()">&times;</button>
+    <div id="detail-icon" class="modal-icon"></div>
+    <div id="detail-badge" style="margin-bottom:8px"></div>
+    <h3 id="detail-title" class="modal-title"></h3>
+    <p id="detail-game" class="modal-meta"></p>
+    <p id="detail-date" class="modal-meta"></p>
+    <p id="detail-countdown" class="modal-countdown"></p>
+    <p id="detail-confirmed" class="modal-confirmed"></p>
+    <p id="detail-desc" class="modal-desc"></p>
+    <a id="detail-link" href="#" target="_blank" rel="noopener" class="modal-link" style="display:none">View Details &rarr;</a>
+  </div>
+</div>
+
 <script>
-// --- State ---
+// ===== SVG Event Icons =====
+const EVENT_ICONS = {
+  major_update: `<svg viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="12" x2="15" y2="15"/><path d="M16.24 7.76l1.42-1.42"/><path d="M6.34 17.66l1.42-1.42"/></svg>`,
+  new_season: `<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>`,
+  in_game_event: `<svg viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+  dlc_release: `<svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`
+};
+
+// ===== State =====
 let games = [];
 let selectedPlatforms = new Set(['xbox', 'ps5', 'steam', 'switch']);
 let selectedGames = new Set();
-let currentTheme = 'dark';
+let currentTheme = 'arcade-pop';
+let isFirstVisit = true;
 
 const PLATFORMS = ['xbox', 'ps5', 'steam', 'switch'];
 const PLATFORM_LABELS = { xbox: 'Xbox', ps5: 'PS5', steam: 'Steam', switch: 'Switch' };
 const EVENT_COLORS = { major_update: '#3b82f6', new_season: '#22c55e', in_game_event: '#f97316', dlc_release: '#a855f7' };
 const EVENT_LABELS = { major_update: 'Major Update', new_season: 'New Season', in_game_event: 'In-Game Event', dlc_release: 'DLC Release' };
 
-// --- Cookie helpers ---
-function setCookie(name, value, days = 365) {
-  const d = new Date(); d.setTime(d.getTime() + days * 86400000);
-  document.cookie = `${name}=${encodeURIComponent(value)};expires=${d.toUTCString()};path=/;SameSite=Lax`;
+// ===== Cookie helpers =====
+function setCookie(name, value, days) {
+  days = days || 365;
+  var d = new Date();
+  d.setTime(d.getTime() + days * 86400000);
+  document.cookie = name + '=' + encodeURIComponent(value) + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
 }
 function getCookie(name) {
-  const v = document.cookie.match('(^|;)\\s*' + name + '=([^;]*)');
+  var v = document.cookie.match('(^|;)\\s*' + name + '=([^;]*)');
   return v ? decodeURIComponent(v[2]) : null;
 }
 
-// --- Theme ---
+// ===== Theme =====
 function setTheme(theme) {
-  document.body.className = `theme-${theme} min-h-screen transition-colors duration-200`;
+  document.body.setAttribute('data-theme', theme);
   currentTheme = theme;
   setCookie('gec_theme', theme);
   updateThemeButtons();
 }
 function updateThemeButtons() {
-  document.querySelectorAll('.theme-btn').forEach(btn => {
-    const isActive = btn.dataset.theme === currentTheme;
-    btn.className = `theme-btn px-2 py-1 text-xs rounded border ${isActive ? 'btn-active' : 'btn-inactive'}`;
+  document.querySelectorAll('.theme-btn').forEach(function(btn) {
+    if (btn.dataset.theme === currentTheme) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
   });
 }
 
-// --- Date helpers ---
-function today() { const d = new Date(); d.setHours(0,0,0,0); return d; }
+// ===== Date helpers =====
+function today() { var d = new Date(); d.setHours(0,0,0,0); return d; }
 function daysBetween(a, b) { return Math.ceil((b - a) / 86400000); }
 function formatDate(iso) { return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); }
 function countdown(iso) {
-  const diff = daysBetween(today(), new Date(iso + 'T00:00:00'));
+  var diff = daysBetween(today(), new Date(iso + 'T00:00:00'));
   if (diff < 0) return 'Already started';
   if (diff === 0) return 'Starts today!';
   if (diff === 1) return 'Starts tomorrow';
-  return `Starts in ${diff} days`;
+  return 'Starts in ' + diff + ' days';
 }
 function isSameDay(d1, d2) { return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate(); }
 
-// --- Filtering ---
+// ===== Filtering =====
 function getFilteredGames() {
-  return games.filter(g =>
-    g.platforms.some(p => selectedPlatforms.has(p)) &&
-    selectedGames.has(g.slug)
-  );
+  return games.filter(function(g) {
+    return g.platforms.some(function(p) { return selectedPlatforms.has(p); }) && selectedGames.has(g.slug);
+  });
 }
 function getFilteredEvents() {
-  const t = today();
-  const end = new Date(t); end.setDate(end.getDate() + 60);
-  const events = [];
-  for (const g of getFilteredGames()) {
-    for (const e of g.events) {
-      const d = new Date(e.date + 'T00:00:00');
+  var t = today();
+  var end = new Date(t); end.setDate(end.getDate() + 60);
+  var events = [];
+  getFilteredGames().forEach(function(g) {
+    g.events.forEach(function(e) {
+      var d = new Date(e.date + 'T00:00:00');
       if (d >= t && d <= end) {
-        events.push({ ...e, gameName: g.name, gameSlug: g.slug });
+        events.push(Object.assign({}, e, { gameName: g.name, gameSlug: g.slug }));
       }
-    }
-  }
-  events.sort((a, b) => a.date.localeCompare(b.date));
+    });
+  });
+  events.sort(function(a, b) { return a.date.localeCompare(b.date); });
   return events;
 }
 
-// --- Platform filter UI ---
+// ===== Platform filter UI =====
 function renderPlatformFilters() {
-  const el = document.getElementById('platform-filters');
-  el.innerHTML = PLATFORMS.map(p => {
-    const active = selectedPlatforms.has(p);
-    return `<button onclick="togglePlatform('${p}')" class="px-3 py-1.5 text-sm rounded border font-medium ${active ? 'btn-active' : 'btn-inactive'}">${PLATFORM_LABELS[p]}</button>`;
+  var el = document.getElementById('platform-filters');
+  el.innerHTML = PLATFORMS.map(function(p) {
+    var active = selectedPlatforms.has(p) ? ' active' : '';
+    return '<button class="btn' + active + '" onclick="togglePlatform(\'' + p + '\')">' + PLATFORM_LABELS[p] + '</button>';
   }).join('');
 }
 function togglePlatform(p) {
   if (selectedPlatforms.has(p)) selectedPlatforms.delete(p);
   else selectedPlatforms.add(p);
-  setCookie('gec_platforms', JSON.stringify([...selectedPlatforms]));
+  setCookie('gec_platforms', JSON.stringify(Array.from(selectedPlatforms)));
   renderAll();
 }
 
-// --- Game picker UI ---
+// ===== Game picker UI =====
 function renderGamePicker() {
-  const el = document.getElementById('game-picker');
-  const visible = games.filter(g => g.platforms.some(p => selectedPlatforms.has(p)));
+  var el = document.getElementById('game-picker');
+  var visible = games.filter(function(g) { return g.platforms.some(function(p) { return selectedPlatforms.has(p); }); });
   if (visible.length === 0) {
-    el.innerHTML = '<span class="muted text-sm">No games match selected platforms.</span>';
+    el.innerHTML = '<span style="color:var(--text-muted);font-size:0.85rem">No games match selected platforms.</span>';
     return;
   }
-  el.innerHTML = visible.map(g => {
-    const active = selectedGames.has(g.slug);
-    return `<button onclick="toggleGame('${g.slug}')" class="px-3 py-1.5 text-sm rounded border font-medium ${active ? 'btn-active' : 'btn-inactive'}">${g.name}</button>`;
+  el.innerHTML = visible.map(function(g) {
+    var active = selectedGames.has(g.slug) ? ' active' : '';
+    return '<button class="btn' + active + '" onclick="toggleGame(\'' + g.slug + '\')">' + g.name + '</button>';
   }).join('');
 }
 function toggleGame(slug) {
   if (selectedGames.has(slug)) selectedGames.delete(slug);
   else selectedGames.add(slug);
-  setCookie('gec_games', JSON.stringify([...selectedGames]));
+  setCookie('gec_games', JSON.stringify(Array.from(selectedGames)));
   renderAll();
 }
 
-// --- This Week ---
+// ===== This Week =====
 function renderThisWeek() {
-  const t = today();
-  const weekEnd = new Date(t); weekEnd.setDate(weekEnd.getDate() + 7);
-  const events = getFilteredEvents().filter(e => {
-    const d = new Date(e.date + 'T00:00:00');
+  var t = today();
+  var weekEnd = new Date(t); weekEnd.setDate(weekEnd.getDate() + 7);
+  var events = getFilteredEvents().filter(function(e) {
+    var d = new Date(e.date + 'T00:00:00');
     return d >= t && d < weekEnd;
   });
-  const container = document.getElementById('this-week');
-  const empty = document.getElementById('this-week-empty');
+  var container = document.getElementById('this-week');
+  var empty = document.getElementById('this-week-empty');
   if (events.length === 0) {
     container.innerHTML = '';
-    empty.classList.remove('hidden');
+    empty.style.display = 'block';
     return;
   }
-  empty.classList.add('hidden');
-  container.innerHTML = events.map(e => `
-    <div class="card border rounded p-3 cursor-pointer card-hover event-${e.type} flex items-center justify-between"
-         onclick='showDetail(${JSON.stringify(e).replace(/'/g, "&#39;")})'>
-      <div class="flex items-center gap-3">
-        <span class="event-badge text-xs px-2 py-0.5 rounded font-medium">${EVENT_LABELS[e.type]}</span>
-        <span class="font-medium text-sm">${e.title}</span>
-        <span class="muted text-xs">${e.gameName}</span>
-      </div>
-      <div class="text-right">
-        <span class="text-xs font-semibold">${countdown(e.date)}</span>
-        <span class="muted text-xs ml-2">${formatDate(e.date)}</span>
-      </div>
-    </div>
-  `).join('');
+  empty.style.display = 'none';
+  container.innerHTML = events.map(function(e) {
+    var eJson = JSON.stringify(e).replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+    return '<div class="event-card" data-type="' + e.type + '" onclick="showDetail(JSON.parse(this.dataset.event.replace(/&quot;/g, \'\\x22\').replace(/&#39;/g, String.fromCharCode(39))))" data-event="' + eJson + '">' +
+      '<div class="event-card-left">' +
+        '<div class="event-icon">' + EVENT_ICONS[e.type] + '</div>' +
+        '<div>' +
+          '<span class="event-badge" data-type="' + e.type + '">' + EVENT_LABELS[e.type] + '</span>' +
+          '<div class="event-title">' + e.title + '</div>' +
+          '<div class="event-game">' + e.gameName + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="event-card-right">' +
+        '<div class="event-countdown">' + countdown(e.date) + '</div>' +
+        '<div class="event-date-label">' + formatDate(e.date) + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 }
 
-// --- Calendar ---
+// ===== Calendar =====
 function renderCalendar() {
-  const container = document.getElementById('calendar');
-  const t = today();
-  const events = getFilteredEvents();
+  var container = document.getElementById('calendar');
+  var t = today();
+  var events = getFilteredEvents();
 
-  // Build event map by date string
-  const eventMap = {};
-  for (const e of events) {
+  var eventMap = {};
+  events.forEach(function(e) {
     if (!eventMap[e.date]) eventMap[e.date] = [];
     eventMap[e.date].push(e);
-  }
+  });
 
-  // Find the Monday on or before today
-  const start = new Date(t);
+  var start = new Date(t);
   start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
-  // End = today + 60 days, extended to fill the week
-  const rawEnd = new Date(t); rawEnd.setDate(rawEnd.getDate() + 60);
-  const end = new Date(rawEnd);
+  var rawEnd = new Date(t); rawEnd.setDate(rawEnd.getDate() + 60);
+  var end = new Date(rawEnd);
   end.setDate(end.getDate() + (7 - end.getDay()) % 7);
 
-  // Day headers
-  const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  let html = dayNames.map(d => `<div class="text-center text-xs muted font-semibold py-1">${d}</div>`).join('');
+  var dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  var html = dayNames.map(function(d) { return '<div class="cal-header-cell">' + d + '</div>'; }).join('');
 
-  const cursor = new Date(start);
+  var cursor = new Date(start);
   while (cursor <= end) {
-    const iso = cursor.toISOString().slice(0, 10);
-    const isToday = isSameDay(cursor, t);
-    const inRange = cursor >= t && cursor <= rawEnd;
-    const dayEvents = eventMap[iso] || [];
+    var iso = cursor.toISOString().slice(0, 10);
+    var isToday = isSameDay(cursor, t);
+    var inRange = cursor >= t && cursor <= rawEnd;
+    var dayEvents = eventMap[iso] || [];
 
-    html += `<div class="cal-day border rounded p-1 ${isToday ? 'ring-2 ring-blue-500' : ''} ${inRange ? 'card' : 'surface opacity-40'}">
-      <div class="text-xs ${isToday ? 'font-bold' : 'muted'} mb-1">${cursor.getDate()}</div>
-      ${dayEvents.map(e => `
-        <div class="text-xs truncate cursor-pointer hover:opacity-80 mb-0.5 flex items-center gap-1"
-             onclick='showDetail(${JSON.stringify(e).replace(/'/g, "&#39;")})'>
-          <span class="cal-dot flex-shrink-0" style="background:${EVENT_COLORS[e.type]}"></span>
-          <span class="truncate">${e.title}</span>
-        </div>
-      `).join('')}
-    </div>`;
+    var classes = 'cal-day';
+    if (isToday) classes += ' today';
+    if (!inRange) classes += ' outside';
+
+    html += '<div class="' + classes + '">';
+    html += '<div class="cal-day-number">' + cursor.getDate() + '</div>';
+    dayEvents.forEach(function(e) {
+      html += '<div class="cal-event" onclick="showDetailDirect(\'' + e.gameSlug + '\', \'' + e.title.replace(/'/g, "\\'") + '\')">' +
+        '<span class="cal-dot" style="background:' + EVENT_COLORS[e.type] + '"></span>' +
+        '<span class="cal-event-text">' + e.title + '</span>' +
+      '</div>';
+    });
+    html += '</div>';
     cursor.setDate(cursor.getDate() + 1);
   }
   container.innerHTML = html;
 }
 
-// --- Detail panel ---
+// ===== Detail Modal =====
 function showDetail(e) {
+  document.getElementById('detail-icon').innerHTML = EVENT_ICONS[e.type] || '';
   document.getElementById('detail-title').textContent = e.title;
   document.getElementById('detail-game').textContent = e.gameName;
   document.getElementById('detail-date').textContent = formatDate(e.date);
   document.getElementById('detail-countdown').textContent = countdown(e.date);
-  document.getElementById('detail-confirmed').innerHTML = e.confirmed
-    ? '<span class="text-green-500">&#10003; Confirmed</span>'
-    : '<span class="text-yellow-500">&#9888; Unconfirmed</span>';
+  var confEl = document.getElementById('detail-confirmed');
+  if (e.confirmed) {
+    confEl.className = 'modal-confirmed yes';
+    confEl.innerHTML = '&#10003; Confirmed';
+  } else {
+    confEl.className = 'modal-confirmed no';
+    confEl.innerHTML = '&#9888; Unconfirmed';
+  }
   document.getElementById('detail-desc').textContent = e.description;
-  document.getElementById('detail-badge').innerHTML =
-    `<span class="event-badge text-xs px-2 py-0.5 rounded font-medium" style="background:${EVENT_COLORS[e.type]};color:#fff">${EVENT_LABELS[e.type]}</span>`;
-  const linkEl = document.getElementById('detail-link');
-  if (e.link) { linkEl.href = e.link; linkEl.classList.remove('hidden'); }
-  else { linkEl.classList.add('hidden'); }
-  document.getElementById('detail-panel').classList.remove('hidden');
+  document.getElementById('detail-badge').innerHTML = '<span class="event-badge" data-type="' + e.type + '">' + EVENT_LABELS[e.type] + '</span>';
+  var linkEl = document.getElementById('detail-link');
+  if (e.link) { linkEl.href = e.link; linkEl.style.display = 'inline-block'; }
+  else { linkEl.style.display = 'none'; }
+  document.getElementById('detail-panel').classList.add('open');
+}
+function showDetailDirect(slug, title) {
+  var events = getFilteredEvents();
+  for (var i = 0; i < events.length; i++) {
+    if (events[i].gameSlug === slug && events[i].title === title) {
+      showDetail(events[i]);
+      return;
+    }
+  }
 }
 function closeDetail(e) {
   if (!e || e.target === document.getElementById('detail-panel')) {
-    document.getElementById('detail-panel').classList.add('hidden');
+    document.getElementById('detail-panel').classList.remove('open');
   }
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeDetail(); });
 
-// --- Render all ---
+// ===== Render All =====
 function renderAll() {
   renderPlatformFilters();
   renderGamePicker();
@@ -366,33 +883,38 @@ function renderAll() {
   updateThemeButtons();
 }
 
-// --- Init ---
+// ===== Init =====
 async function init() {
-  // Load preferences from cookies
-  const savedTheme = getCookie('gec_theme');
+  // Load theme from cookie
+  var savedTheme = getCookie('gec_theme');
   if (savedTheme) currentTheme = savedTheme;
   setTheme(currentTheme);
 
-  const savedPlatforms = getCookie('gec_platforms');
-  if (savedPlatforms) { try { selectedPlatforms = new Set(JSON.parse(savedPlatforms)); } catch {} }
+  // Load platforms from cookie
+  var savedPlatforms = getCookie('gec_platforms');
+  if (savedPlatforms) { try { selectedPlatforms = new Set(JSON.parse(savedPlatforms)); } catch(e) {} }
 
   // Fetch games
   try {
-    const res = await fetch('./games.json');
+    var res = await fetch('./games.json');
     games = await res.json();
-  } catch (err) {
+  } catch(err) {
     console.error('Failed to load games.json:', err);
     games = [];
   }
 
-  // Restore saved game picks, default to all
-  const savedGames = getCookie('gec_games');
+  // Restore saved game picks — first visit = nothing selected
+  var savedGames = getCookie('gec_games');
   if (savedGames) {
-    try { selectedGames = new Set(JSON.parse(savedGames)); } catch {}
+    try {
+      var parsed = JSON.parse(savedGames);
+      if (Array.isArray(parsed)) {
+        selectedGames = new Set(parsed);
+        isFirstVisit = false;
+      }
+    } catch(e) {}
   }
-  if (selectedGames.size === 0) {
-    selectedGames = new Set(games.map(g => g.slug));
-  }
+  // First visit: selectedGames stays empty (nothing selected)
 
   renderAll();
 }
