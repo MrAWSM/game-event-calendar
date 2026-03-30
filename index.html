@@ -571,6 +571,87 @@ body::before {
 .modal-link:hover { opacity: 0.85; }
 [data-theme="clean-console"] .modal-link { color: #fff; }
 
+/* ===== Settings Drawer ===== */
+.settings-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  transition: all 0.15s ease;
+}
+.settings-btn:hover {
+  border-color: var(--border-active);
+  color: var(--text-primary);
+}
+.settings-btn svg {
+  width: 16px;
+  height: 16px;
+}
+.drawer-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+.drawer-overlay.open { display: block; }
+.drawer-panel {
+  position: fixed;
+  top: 0;
+  right: -380px;
+  z-index: 90;
+  width: 360px;
+  max-width: 90vw;
+  height: 100vh;
+  background: var(--bg-secondary);
+  border-left: 1px solid var(--border-color);
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+  transition: right 0.25s ease;
+  padding: 24px 20px;
+}
+.drawer-panel.open { right: 0; }
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.drawer-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+[data-theme="arcade-pop"] .drawer-title {
+  font-size: 1.3rem;
+  letter-spacing: 1px;
+}
+.drawer-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  transition: all 0.15s ease;
+}
+.drawer-close:hover {
+  color: var(--text-primary);
+  border-color: var(--border-active);
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 640px) {
   .event-card { flex-direction: column; align-items: flex-start; gap: 6px; }
@@ -589,35 +670,23 @@ body::before {
 <header class="header">
   <div class="header-inner">
     <h1 class="header-title">Game Event Calendar</h1>
-    <div class="theme-switcher">
-      <span class="theme-label">Theme</span>
-      <button class="btn theme-btn" data-theme="arcade-pop" onclick="setTheme('arcade-pop')">Arcade Pop</button>
-      <button class="btn theme-btn" data-theme="dark-terminal" onclick="setTheme('dark-terminal')">Terminal</button>
-      <button class="btn theme-btn" data-theme="clean-console" onclick="setTheme('clean-console')">Console</button>
-      <button class="btn theme-btn" data-theme="retro" onclick="setTheme('retro')">Retro</button>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="theme-switcher">
+        <span class="theme-label">Theme</span>
+        <button class="btn theme-btn" data-theme="arcade-pop" onclick="setTheme('arcade-pop')">Arcade Pop</button>
+        <button class="btn theme-btn" data-theme="dark-terminal" onclick="setTheme('dark-terminal')">Terminal</button>
+        <button class="btn theme-btn" data-theme="clean-console" onclick="setTheme('clean-console')">Console</button>
+        <button class="btn theme-btn" data-theme="retro" onclick="setTheme('retro')">Retro</button>
+      </div>
+      <button class="settings-btn" onclick="openDrawer()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        My Games
+      </button>
     </div>
   </div>
 </header>
 
 <main class="container" style="padding-top: 24px; padding-bottom: 48px;">
-
-  <!-- Platform filters -->
-  <section class="section">
-    <div class="section-header">
-      <h2 class="section-title" style="margin-bottom:0">Platforms</h2>
-      <button class="btn-toggle" id="platform-toggle" onclick="toggleAllPlatforms()">Select All</button>
-    </div>
-    <div class="pill-group" id="platform-filters"></div>
-  </section>
-
-  <!-- Game picker -->
-  <section class="section">
-    <div class="section-header">
-      <h2 class="section-title" style="margin-bottom:0">Games</h2>
-      <button class="btn-toggle" id="game-toggle" onclick="toggleAllGames()">Select All</button>
-    </div>
-    <div class="pill-group" id="game-picker"></div>
-  </section>
 
   <!-- This Week -->
   <section class="section">
@@ -626,7 +695,7 @@ body::before {
     <div id="this-week-empty" class="empty-state" style="display:none;">
       <div class="empty-state-icon">&#127918;</div>
       <div class="empty-state-text">No events this week</div>
-      <div class="empty-state-sub">Select some games above to see upcoming events</div>
+      <div class="empty-state-sub">Click "My Games" to select games and see upcoming events</div>
     </div>
   </section>
 
@@ -645,6 +714,33 @@ body::before {
   </section>
 
 </main>
+
+<!-- Settings Drawer -->
+<div id="drawer-overlay" class="drawer-overlay" onclick="closeDrawer()"></div>
+<div id="drawer-panel" class="drawer-panel">
+  <div class="drawer-header">
+    <span class="drawer-title">My Games</span>
+    <button class="drawer-close" onclick="closeDrawer()">&times;</button>
+  </div>
+
+  <!-- Platform filters -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title" style="margin-bottom:0">Platforms</h2>
+      <button class="btn-toggle" id="platform-toggle" onclick="toggleAllPlatforms()">Select All</button>
+    </div>
+    <div class="pill-group" id="platform-filters"></div>
+  </section>
+
+  <!-- Game picker -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title" style="margin-bottom:0">Games</h2>
+      <button class="btn-toggle" id="game-toggle" onclick="toggleAllGames()">Select All</button>
+    </div>
+    <div class="pill-group" id="game-picker"></div>
+  </section>
+</div>
 
 <!-- Detail Modal -->
 <div id="detail-panel" class="modal-overlay" onclick="closeDetail(event)">
@@ -929,7 +1025,22 @@ function closeDetail(e) {
     document.getElementById('detail-panel').classList.remove('open');
   }
 }
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeDetail(); });
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    if (document.getElementById('drawer-panel').classList.contains('open')) closeDrawer();
+    else closeDetail();
+  }
+});
+
+// ===== Settings Drawer =====
+function openDrawer() {
+  document.getElementById('drawer-overlay').classList.add('open');
+  document.getElementById('drawer-panel').classList.add('open');
+}
+function closeDrawer() {
+  document.getElementById('drawer-overlay').classList.remove('open');
+  document.getElementById('drawer-panel').classList.remove('open');
+}
 
 // ===== Render All =====
 function renderAll() {
