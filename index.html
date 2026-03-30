@@ -1082,9 +1082,9 @@ function renderCalendar() {
     html += '<div class="' + classes + '">';
     html += '<div class="cal-day-number">' + cursor.getDate() + '</div>';
     dayEvents.forEach(function(e) {
-      html += '<div class="cal-event" onclick="showDetailDirect(\'' + e.gameSlug + '\', \'' + e.title.replace(/'/g, "\\'") + '\')">' +
+      html += '<div class="cal-event" onclick="showDetailDirect(\'' + e.gameSlug + '\', \'' + e.title.replace(/'/g, "\\'") + '\')" style="color:' + EVENT_COLORS[e.type] + '">' +
         '<span class="cal-dot" style="background:' + EVENT_COLORS[e.type] + '"></span>' +
-        '<span class="cal-event-text">' + e.gameName + ': ' + e.title + '</span>' +
+        '<span class="cal-event-text">' + e.gameName + '</span>' +
       '</div>';
     });
     html += '</div>';
