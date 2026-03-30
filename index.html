@@ -278,6 +278,27 @@ body::before {
   letter-spacing: 1px;
 }
 
+/* ===== Section Header with Toggle ===== */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.btn-toggle {
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+}
+.btn-toggle:hover {
+  color: var(--text-secondary);
+  border-color: var(--border-active);
+}
+
 /* ===== Filter/Game pills ===== */
 .pill-group {
   display: flex;
@@ -582,13 +603,19 @@ body::before {
 
   <!-- Platform filters -->
   <section class="section">
-    <h2 class="section-title">Platforms</h2>
+    <div class="section-header">
+      <h2 class="section-title" style="margin-bottom:0">Platforms</h2>
+      <button class="btn-toggle" id="platform-toggle" onclick="toggleAllPlatforms()">Select All</button>
+    </div>
     <div class="pill-group" id="platform-filters"></div>
   </section>
 
   <!-- Game picker -->
   <section class="section">
-    <h2 class="section-title">Games</h2>
+    <div class="section-header">
+      <h2 class="section-title" style="margin-bottom:0">Games</h2>
+      <button class="btn-toggle" id="game-toggle" onclick="toggleAllGames()">Select All</button>
+    </div>
     <div class="pill-group" id="game-picker"></div>
   </section>
 
@@ -734,6 +761,19 @@ function togglePlatform(p) {
   setCookie('gec_platforms', JSON.stringify(Array.from(selectedPlatforms)));
   renderAll();
 }
+function toggleAllPlatforms() {
+  if (selectedPlatforms.size === PLATFORMS.length) {
+    selectedPlatforms.clear();
+  } else {
+    PLATFORMS.forEach(function(p) { selectedPlatforms.add(p); });
+  }
+  setCookie('gec_platforms', JSON.stringify(Array.from(selectedPlatforms)));
+  renderAll();
+}
+function updatePlatformToggleLabel() {
+  var btn = document.getElementById('platform-toggle');
+  btn.textContent = selectedPlatforms.size === PLATFORMS.length ? 'Deselect All' : 'Select All';
+}
 
 // ===== Game picker UI =====
 function renderGamePicker() {
@@ -753,6 +793,23 @@ function toggleGame(slug) {
   else selectedGames.add(slug);
   setCookie('gec_games', JSON.stringify(Array.from(selectedGames)));
   renderAll();
+}
+function toggleAllGames() {
+  var visible = games.filter(function(g) { return g.platforms.some(function(p) { return selectedPlatforms.has(p); }); });
+  var allSelected = visible.length > 0 && visible.every(function(g) { return selectedGames.has(g.slug); });
+  if (allSelected) {
+    visible.forEach(function(g) { selectedGames.delete(g.slug); });
+  } else {
+    visible.forEach(function(g) { selectedGames.add(g.slug); });
+  }
+  setCookie('gec_games', JSON.stringify(Array.from(selectedGames)));
+  renderAll();
+}
+function updateGameToggleLabel() {
+  var btn = document.getElementById('game-toggle');
+  var visible = games.filter(function(g) { return g.platforms.some(function(p) { return selectedPlatforms.has(p); }); });
+  var allSelected = visible.length > 0 && visible.every(function(g) { return selectedGames.has(g.slug); });
+  btn.textContent = allSelected ? 'Deselect All' : 'Select All';
 }
 
 // ===== This Week =====
@@ -881,6 +938,8 @@ function renderAll() {
   renderThisWeek();
   renderCalendar();
   updateThemeButtons();
+  updatePlatformToggleLabel();
+  updateGameToggleLabel();
 }
 
 // ===== Init =====
