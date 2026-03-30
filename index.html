@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Event Calendar</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        oled: { bg: '#000000', card: '#0a0a0a', text: '#e0e0e0', muted: '#666666', border: '#1a1a1a' },
+        retro: { bg: '#2b1b17', card: '#3e2723', text: '#ffcc80', muted: '#a1887f', border: '#5d4037', accent: '#ff6f00' }
+      }
+    }
+  }
+};
+</script>
+<style>
+  /* Theme: OLED */
+  .theme-oled { background-color: #000; color: #e0e0e0; }
+  .theme-oled .card { background-color: #0a0a0a; border-color: #1a1a1a; }
+  .theme-oled .card-hover:hover { background-color: #111; }
+  .theme-oled .muted { color: #666; }
+  .theme-oled .surface { background-color: #050505; }
+  .theme-oled .btn-inactive { background-color: #111; color: #888; border-color: #222; }
+  .theme-oled .btn-active { background-color: #1a1a1a; color: #fff; border-color: #333; }
+  .theme-oled .header-bg { background-color: #000; border-color: #111; }
+
+  /* Theme: Retro */
+  .theme-retro { background-color: #2b1b17; color: #ffcc80; }
+  .theme-retro .card { background-color: #3e2723; border-color: #5d4037; }
+  .theme-retro .card-hover:hover { background-color: #4e342e; }
+  .theme-retro .muted { color: #a1887f; }
+  .theme-retro .surface { background-color: #321f1a; }
+  .theme-retro .btn-inactive { background-color: #3e2723; color: #a1887f; border-color: #5d4037; }
+  .theme-retro .btn-active { background-color: #5d4037; color: #ffcc80; border-color: #8d6e63; }
+  .theme-retro .header-bg { background-color: #2b1b17; border-color: #5d4037; }
+  .theme-retro * { font-family: 'Courier New', monospace !important; }
+
+  /* Theme: Light */
+  .theme-light { background-color: #f8fafc; color: #1e293b; }
+  .theme-light .card { background-color: #fff; border-color: #e2e8f0; }
+  .theme-light .card-hover:hover { background-color: #f1f5f9; }
+  .theme-light .muted { color: #64748b; }
+  .theme-light .surface { background-color: #f1f5f9; }
+  .theme-light .btn-inactive { background-color: #f1f5f9; color: #64748b; border-color: #e2e8f0; }
+  .theme-light .btn-active { background-color: #e2e8f0; color: #1e293b; border-color: #cbd5e1; }
+  .theme-light .header-bg { background-color: #fff; border-color: #e2e8f0; }
+
+  /* Theme: Dark (default) */
+  .theme-dark { background-color: #0f172a; color: #e2e8f0; }
+  .theme-dark .card { background-color: #1e293b; border-color: #334155; }
+  .theme-dark .card-hover:hover { background-color: #253349; }
+  .theme-dark .muted { color: #94a3b8; }
+  .theme-dark .surface { background-color: #1e293b; }
+  .theme-dark .btn-inactive { background-color: #1e293b; color: #94a3b8; border-color: #334155; }
+  .theme-dark .btn-active { background-color: #334155; color: #e2e8f0; border-color: #475569; }
+  .theme-dark .header-bg { background-color: #0f172a; border-color: #1e293b; }
+
+  /* Event type colors — consistent across all themes */
+  .event-major_update { border-left: 4px solid #3b82f6; }
+  .event-major_update .event-badge { background-color: #3b82f6; color: #fff; }
+  .event-new_season { border-left: 4px solid #22c55e; }
+  .event-new_season .event-badge { background-color: #22c55e; color: #fff; }
+  .event-in_game_event { border-left: 4px solid #f97316; }
+  .event-in_game_event .event-badge { background-color: #f97316; color: #fff; }
+  .event-dlc_release { border-left: 4px solid #a855f7; }
+  .event-dlc_release .event-badge { background-color: #a855f7; color: #fff; }
+
+  .expand-enter { animation: expandIn 0.2s ease-out; }
+  @keyframes expandIn { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 200px; } }
+
+  /* Calendar grid */
+  .cal-day { min-height: 80px; }
+  .cal-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+</style>
+</head>
+<body class="theme-dark min-h-screen transition-colors duration-200">
+
+<!-- Header -->
+<header class="header-bg border-b sticky top-0 z-50 px-4 py-3">
+  <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+    <h1 class="text-xl font-bold tracking-tight">Game Event Calendar</h1>
+    <div class="flex items-center gap-2">
+      <span class="muted text-xs mr-1">Theme:</span>
+      <button onclick="setTheme('dark')" class="theme-btn px-2 py-1 text-xs rounded border" data-theme="dark">Dark</button>
+      <button onclick="setTheme('light')" class="theme-btn px-2 py-1 text-xs rounded border" data-theme="light">Light</button>
+      <button onclick="setTheme('oled')" class="theme-btn px-2 py-1 text-xs rounded border" data-theme="oled">OLED</button>
+      <button onclick="setTheme('retro')" class="theme-btn px-2 py-1 text-xs rounded border" data-theme="retro">Retro</button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 py-6">
+
+  <!-- Platform filters -->
+  <section class="mb-4">
+    <h2 class="text-sm font-semibold muted mb-2 uppercase tracking-wider">Platforms</h2>
+    <div class="flex flex-wrap gap-2" id="platform-filters"></div>
+  </section>
+
+  <!-- Game picker -->
+  <section class="mb-6">
+    <h2 class="text-sm font-semibold muted mb-2 uppercase tracking-wider">Games</h2>
+    <div class="flex flex-wrap gap-2" id="game-picker"></div>
+  </section>
+
+  <!-- This Week -->
+  <section class="mb-8">
+    <h2 class="text-lg font-bold mb-3">This Week</h2>
+    <div id="this-week" class="grid gap-2"></div>
+    <p id="this-week-empty" class="muted text-sm hidden">No events this week.</p>
+  </section>
+
+  <!-- Calendar -->
+  <section>
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="text-lg font-bold">60-Day Calendar</h2>
+      <div class="flex gap-3 text-xs muted">
+        <span class="flex items-center gap-1"><span class="cal-dot" style="background:#3b82f6"></span> Update</span>
+        <span class="flex items-center gap-1"><span class="cal-dot" style="background:#22c55e"></span> Season</span>
+        <span class="flex items-center gap-1"><span class="cal-dot" style="background:#f97316"></span> Event</span>
+        <span class="flex items-center gap-1"><span class="cal-dot" style="background:#a855f7"></span> DLC</span>
+      </div>
+    </div>
+    <div id="calendar" class="grid grid-cols-7 gap-1"></div>
+  </section>
+
+  <!-- Event detail panel -->
+  <div id="detail-panel" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50" onclick="closeDetail(event)">
+    <div class="card border rounded-lg shadow-xl max-w-md w-full mx-4 p-6" onclick="event.stopPropagation()">
+      <div class="flex items-start justify-between mb-3">
+        <h3 id="detail-title" class="text-lg font-bold"></h3>
+        <button onclick="closeDetail()" class="muted hover:opacity-70 text-xl leading-none">&times;</button>
+      </div>
+      <div id="detail-badge" class="mb-3"></div>
+      <p id="detail-game" class="text-sm muted mb-1"></p>
+      <p id="detail-date" class="text-sm muted mb-1"></p>
+      <p id="detail-countdown" class="text-sm font-semibold mb-3"></p>
+      <p id="detail-confirmed" class="text-xs mb-3"></p>
+      <p id="detail-desc" class="text-sm mb-4"></p>
+      <a id="detail-link" href="#" target="_blank" rel="noopener" class="hidden inline-block px-4 py-2 rounded text-sm font-medium bg-blue-600 text-white hover:bg-blue-700">View Details &rarr;</a>
+    </div>
+  </div>
+</main>
+
+<script>
+// --- State ---
+let games = [];
+let selectedPlatforms = new Set(['xbox', 'ps5', 'steam', 'switch']);
+let selectedGames = new Set();
+let currentTheme = 'dark';
+
+const PLATFORMS = ['xbox', 'ps5', 'steam', 'switch'];
+const PLATFORM_LABELS = { xbox: 'Xbox', ps5: 'PS5', steam: 'Steam', switch: 'Switch' };
+const EVENT_COLORS = { major_update: '#3b82f6', new_season: '#22c55e', in_game_event: '#f97316', dlc_release: '#a855f7' };
+const EVENT_LABELS = { major_update: 'Major Update', new_season: 'New Season', in_game_event: 'In-Game Event', dlc_release: 'DLC Release' };
+
+// --- Cookie helpers ---
+function setCookie(name, value, days = 365) {
+  const d = new Date(); d.setTime(d.getTime() + days * 86400000);
+  document.cookie = `${name}=${encodeURIComponent(value)};expires=${d.toUTCString()};path=/;SameSite=Lax`;
+}
+function getCookie(name) {
+  const v = document.cookie.match('(^|;)\\s*' + name + '=([^;]*)');
+  return v ? decodeURIComponent(v[2]) : null;
+}
+
+// --- Theme ---
+function setTheme(theme) {
+  document.body.className = `theme-${theme} min-h-screen transition-colors duration-200`;
+  currentTheme = theme;
+  setCookie('gec_theme', theme);
+  updateThemeButtons();
+}
+function updateThemeButtons() {
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    const isActive = btn.dataset.theme === currentTheme;
+    btn.className = `theme-btn px-2 py-1 text-xs rounded border ${isActive ? 'btn-active' : 'btn-inactive'}`;
+  });
+}
+
+// --- Date helpers ---
+function today() { const d = new Date(); d.setHours(0,0,0,0); return d; }
+function daysBetween(a, b) { return Math.ceil((b - a) / 86400000); }
+function formatDate(iso) { return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); }
+function countdown(iso) {
+  const diff = daysBetween(today(), new Date(iso + 'T00:00:00'));
+  if (diff < 0) return 'Already started';
+  if (diff === 0) return 'Starts today!';
+  if (diff === 1) return 'Starts tomorrow';
+  return `Starts in ${diff} days`;
+}
+function isSameDay(d1, d2) { return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate(); }
+
+// --- Filtering ---
+function getFilteredGames() {
+  return games.filter(g =>
+    g.platforms.some(p => selectedPlatforms.has(p)) &&
+    selectedGames.has(g.slug)
+  );
+}
+function getFilteredEvents() {
+  const t = today();
+  const end = new Date(t); end.setDate(end.getDate() + 60);
+  const events = [];
+  for (const g of getFilteredGames()) {
+    for (const e of g.events) {
+      const d = new Date(e.date + 'T00:00:00');
+      if (d >= t && d <= end) {
+        events.push({ ...e, gameName: g.name, gameSlug: g.slug });
+      }
+    }
+  }
+  events.sort((a, b) => a.date.localeCompare(b.date));
+  return events;
+}
+
+// --- Platform filter UI ---
+function renderPlatformFilters() {
+  const el = document.getElementById('platform-filters');
+  el.innerHTML = PLATFORMS.map(p => {
+    const active = selectedPlatforms.has(p);
+    return `<button onclick="togglePlatform('${p}')" class="px-3 py-1.5 text-sm rounded border font-medium ${active ? 'btn-active' : 'btn-inactive'}">${PLATFORM_LABELS[p]}</button>`;
+  }).join('');
+}
+function togglePlatform(p) {
+  if (selectedPlatforms.has(p)) selectedPlatforms.delete(p);
+  else selectedPlatforms.add(p);
+  setCookie('gec_platforms', JSON.stringify([...selectedPlatforms]));
+  renderAll();
+}
+
+// --- Game picker UI ---
+function renderGamePicker() {
+  const el = document.getElementById('game-picker');
+  const visible = games.filter(g => g.platforms.some(p => selectedPlatforms.has(p)));
+  if (visible.length === 0) {
+    el.innerHTML = '<span class="muted text-sm">No games match selected platforms.</span>';
+    return;
+  }
+  el.innerHTML = visible.map(g => {
+    const active = selectedGames.has(g.slug);
+    return `<button onclick="toggleGame('${g.slug}')" class="px-3 py-1.5 text-sm rounded border font-medium ${active ? 'btn-active' : 'btn-inactive'}">${g.name}</button>`;
+  }).join('');
+}
+function toggleGame(slug) {
+  if (selectedGames.has(slug)) selectedGames.delete(slug);
+  else selectedGames.add(slug);
+  setCookie('gec_games', JSON.stringify([...selectedGames]));
+  renderAll();
+}
+
+// --- This Week ---
+function renderThisWeek() {
+  const t = today();
+  const weekEnd = new Date(t); weekEnd.setDate(weekEnd.getDate() + 7);
+  const events = getFilteredEvents().filter(e => {
+    const d = new Date(e.date + 'T00:00:00');
+    return d >= t && d < weekEnd;
+  });
+  const container = document.getElementById('this-week');
+  const empty = document.getElementById('this-week-empty');
+  if (events.length === 0) {
+    container.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+  container.innerHTML = events.map(e => `
+    <div class="card border rounded p-3 cursor-pointer card-hover event-${e.type} flex items-center justify-between"
+         onclick='showDetail(${JSON.stringify(e).replace(/'/g, "&#39;")})'>
+      <div class="flex items-center gap-3">
+        <span class="event-badge text-xs px-2 py-0.5 rounded font-medium">${EVENT_LABELS[e.type]}</span>
+        <span class="font-medium text-sm">${e.title}</span>
+        <span class="muted text-xs">${e.gameName}</span>
+      </div>
+      <div class="text-right">
+        <span class="text-xs font-semibold">${countdown(e.date)}</span>
+        <span class="muted text-xs ml-2">${formatDate(e.date)}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// --- Calendar ---
+function renderCalendar() {
+  const container = document.getElementById('calendar');
+  const t = today();
+  const events = getFilteredEvents();
+
+  // Build event map by date string
+  const eventMap = {};
+  for (const e of events) {
+    if (!eventMap[e.date]) eventMap[e.date] = [];
+    eventMap[e.date].push(e);
+  }
+
+  // Find the Monday on or before today
+  const start = new Date(t);
+  start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
+  // End = today + 60 days, extended to fill the week
+  const rawEnd = new Date(t); rawEnd.setDate(rawEnd.getDate() + 60);
+  const end = new Date(rawEnd);
+  end.setDate(end.getDate() + (7 - end.getDay()) % 7);
+
+  // Day headers
+  const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  let html = dayNames.map(d => `<div class="text-center text-xs muted font-semibold py-1">${d}</div>`).join('');
+
+  const cursor = new Date(start);
+  while (cursor <= end) {
+    const iso = cursor.toISOString().slice(0, 10);
+    const isToday = isSameDay(cursor, t);
+    const inRange = cursor >= t && cursor <= rawEnd;
+    const dayEvents = eventMap[iso] || [];
+
+    html += `<div class="cal-day border rounded p-1 ${isToday ? 'ring-2 ring-blue-500' : ''} ${inRange ? 'card' : 'surface opacity-40'}">
+      <div class="text-xs ${isToday ? 'font-bold' : 'muted'} mb-1">${cursor.getDate()}</div>
+      ${dayEvents.map(e => `
+        <div class="text-xs truncate cursor-pointer hover:opacity-80 mb-0.5 flex items-center gap-1"
+             onclick='showDetail(${JSON.stringify(e).replace(/'/g, "&#39;")})'>
+          <span class="cal-dot flex-shrink-0" style="background:${EVENT_COLORS[e.type]}"></span>
+          <span class="truncate">${e.title}</span>
+        </div>
+      `).join('')}
+    </div>`;
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  container.innerHTML = html;
+}
+
+// --- Detail panel ---
+function showDetail(e) {
+  document.getElementById('detail-title').textContent = e.title;
+  document.getElementById('detail-game').textContent = e.gameName;
+  document.getElementById('detail-date').textContent = formatDate(e.date);
+  document.getElementById('detail-countdown').textContent = countdown(e.date);
+  document.getElementById('detail-confirmed').innerHTML = e.confirmed
+    ? '<span class="text-green-500">&#10003; Confirmed</span>'
+    : '<span class="text-yellow-500">&#9888; Unconfirmed</span>';
+  document.getElementById('detail-desc').textContent = e.description;
+  document.getElementById('detail-badge').innerHTML =
+    `<span class="event-badge text-xs px-2 py-0.5 rounded font-medium" style="background:${EVENT_COLORS[e.type]};color:#fff">${EVENT_LABELS[e.type]}</span>`;
+  const linkEl = document.getElementById('detail-link');
+  if (e.link) { linkEl.href = e.link; linkEl.classList.remove('hidden'); }
+  else { linkEl.classList.add('hidden'); }
+  document.getElementById('detail-panel').classList.remove('hidden');
+}
+function closeDetail(e) {
+  if (!e || e.target === document.getElementById('detail-panel')) {
+    document.getElementById('detail-panel').classList.add('hidden');
+  }
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
+
+// --- Render all ---
+function renderAll() {
+  renderPlatformFilters();
+  renderGamePicker();
+  renderThisWeek();
+  renderCalendar();
+  updateThemeButtons();
+}
+
+// --- Init ---
+async function init() {
+  // Load preferences from cookies
+  const savedTheme = getCookie('gec_theme');
+  if (savedTheme) currentTheme = savedTheme;
+  setTheme(currentTheme);
+
+  const savedPlatforms = getCookie('gec_platforms');
+  if (savedPlatforms) { try { selectedPlatforms = new Set(JSON.parse(savedPlatforms)); } catch {} }
+
+  // Fetch games
+  try {
+    const res = await fetch('./games.json');
+    games = await res.json();
+  } catch (err) {
+    console.error('Failed to load games.json:', err);
+    games = [];
+  }
+
+  // Restore saved game picks, default to all
+  const savedGames = getCookie('gec_games');
+  if (savedGames) {
+    try { selectedGames = new Set(JSON.parse(savedGames)); } catch {}
+  }
+  if (selectedGames.size === 0) {
+    selectedGames = new Set(games.map(g => g.slug));
+  }
+
+  renderAll();
+}
+
+init();
+</script>
+</body>
+</html>

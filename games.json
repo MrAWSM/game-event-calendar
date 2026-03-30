@@ -1,0 +1,494 @@
+[
+  {
+    "name": "Forza Horizon 6",
+    "slug": "forza-horizon-6",
+    "platforms": ["xbox"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Forza Horizon 6 Launch",
+        "type": "major_update",
+        "date": "2026-05-19",
+        "confirmed": true,
+        "description": "Forza Horizon 6 releases on Xbox Series X/S. Features the largest and densest map with verticality, diverse biomes, and Japan's unique car culture.",
+        "link": "https://news.xbox.com/en-us/2026/03/26/xbox-partner-preview-march-2026-recap/"
+      }
+    ]
+  },
+  {
+    "name": "Sea of Thieves",
+    "slug": "sea-of-thieves",
+    "platforms": ["xbox", "steam"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Season 19 Launch",
+        "type": "new_season",
+        "date": "2026-03-30",
+        "confirmed": true,
+        "description": "Season 19 with improved Hourglass PvP battles, new limited-time events, large-scale multi-ship faction clashes, fresh cosmetics, and 100 levels of Seasonal Renown.",
+        "link": "https://www.seaofthieves.com/"
+      }
+    ]
+  },
+  {
+    "name": "Hades II",
+    "slug": "hades-2",
+    "platforms": ["xbox", "steam", "ps5"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Console Launch",
+        "type": "major_update",
+        "date": "2026-04-14",
+        "confirmed": true,
+        "description": "Supergiant's acclaimed roguelite sequel comes to Xbox and PlayStation consoles.",
+        "link": "https://www.supergiantgames.com/games/hades-ii/"
+      }
+    ]
+  },
+  {
+    "name": "Super Meat Boy 3D",
+    "slug": "super-meat-boy-3d",
+    "platforms": ["xbox", "steam", "ps5"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Game Release",
+        "type": "major_update",
+        "date": "2026-03-31",
+        "confirmed": true,
+        "description": "Super Meat Boy 3D launches on Xbox Series X|S, Xbox on PC, Cloud Gaming, Steam, and PS5, plus Xbox Game Pass.",
+        "link": "https://www.xbox.com/"
+      }
+    ]
+  },
+  {
+    "name": "Diablo IV: Lord of Hatred",
+    "slug": "diablo-4",
+    "platforms": ["ps5", "steam", "xbox"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Lord of Hatred Expansion",
+        "type": "dlc_release",
+        "date": "2026-04-28",
+        "confirmed": true,
+        "description": "Diablo IV's next major expansion 'Lord of Hatred' launches in April 2026.",
+        "link": "https://www.diablo4.com/"
+      }
+    ]
+  },
+  {
+    "name": "Pragmata",
+    "slug": "pragmata",
+    "platforms": ["ps5", "steam", "xbox", "switch"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Game Release",
+        "type": "major_update",
+        "date": "2026-04-17",
+        "confirmed": true,
+        "description": "Capcom's sci-fi shooter game Pragmata releases across multiple platforms.",
+        "link": "https://www.capcom.com/"
+      }
+    ]
+  },
+  {
+    "name": "Minecraft",
+    "slug": "minecraft",
+    "platforms": ["steam", "xbox", "ps5", "switch"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Java Edition 26.1 - Tiny Takeover",
+        "type": "major_update",
+        "date": "2026-03-24",
+        "confirmed": true,
+        "description": "Java Edition 26.1 adds unique models for every baby mob, golden dandelion, and craftable name tags.",
+        "link": "https://minecraft.net/"
+      },
+      {
+        "title": "Minecraft Live 2026 Event",
+        "type": "in_game_event",
+        "date": "2026-04-15",
+        "confirmed": false,
+        "description": "Minecraft Live 2026 show featuring announcements about upcoming updates and potentially new games.",
+        "link": "https://minecraft.net/"
+      }
+    ]
+  },
+  {
+    "name": "Darwin's Paradox",
+    "slug": "darwins-paradox",
+    "platforms": ["ps5", "switch"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Game Release",
+        "type": "major_update",
+        "date": "2026-04-02",
+        "confirmed": true,
+        "description": "Side-scrolling platformer from Konami where players take on the role of an octopus.",
+        "link": "https://www.konami.com/"
+      }
+    ]
+  },
+  {
+    "name": "Pokemon Champions",
+    "slug": "pokemon-champions",
+    "platforms": ["switch"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Game Release",
+        "type": "major_update",
+        "date": "2026-04-08",
+        "confirmed": true,
+        "description": "New Pokemon game releases for Nintendo Switch.",
+        "link": "https://www.pokemon.com/"
+      }
+    ]
+  },
+  {
+    "name": "Fortnite",
+    "slug": "fortnite",
+    "platforms": ["steam", "xbox", "ps5", "switch"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Chapter 7 Season 2 Active",
+        "type": "new_season",
+        "date": "2026-03-19",
+        "confirmed": true,
+        "description": "Chapter 7 Season 2 is currently active and runs until April 29, 2026.",
+        "link": "https://www.fortnite.com/"
+      },
+      {
+        "title": "Potential Star Wars Event",
+        "type": "in_game_event",
+        "date": "2026-04-30",
+        "confirmed": false,
+        "description": "Rumored annual Star Wars crossover event with lightsaber pickaxes potentially coming late April.",
+        "link": "https://www.fortnite.com/"
+      }
+    ]
+  },
+  {
+    "name": "Lego Batman: Legacy of the Dark Knight",
+    "slug": "lego-batman",
+    "platforms": ["ps5", "steam", "xbox", "switch"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Game Release",
+        "type": "major_update",
+        "date": "2026-05-22",
+        "confirmed": true,
+        "description": "Open-world Gotham City adventure blending LEGO humor with stealth and melee combat.",
+        "link": "https://www.lego.com/"
+      }
+    ]
+  },
+  {
+    "name": "Indiana Jones and the Great Circle",
+    "slug": "indiana-jones",
+    "platforms": ["ps5", "steam", "xbox", "switch"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Game Release",
+        "type": "major_update",
+        "date": "2026-05-12",
+        "confirmed": true,
+        "description": "New Indiana Jones adventure game releases on console and PC platforms.",
+        "link": "https://indy.bethesda.net/"
+      }
+    ]
+  },
+  {
+    "name": "007 First Light",
+    "slug": "007-first-light",
+    "platforms": ["ps5", "steam", "xbox"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Game Release",
+        "type": "major_update",
+        "date": "2026-05-27",
+        "confirmed": true,
+        "description": "007 First Light, developed by IO Interactive, follows a young James Bond rising through MI6.",
+        "link": "https://www.iointeractive.com/"
+      }
+    ]
+  },
+  {
+    "name": "Slay the Spire 2",
+    "slug": "slay-the-spire-2",
+    "platforms": ["steam"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Early Access Launch",
+        "type": "major_update",
+        "date": "2026-03-06",
+        "confirmed": true,
+        "description": "Slay the Spire 2 enters Early Access with 4-player co-op available on day one.",
+        "link": "https://www.megacrit.com/"
+      }
+    ]
+  },
+  {
+    "name": "FATAL FRAME II: Crimson Butterfly REMAKE",
+    "slug": "fatal-frame-2",
+    "platforms": ["steam"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Game Release",
+        "type": "major_update",
+        "date": "2026-03-25",
+        "confirmed": true,
+        "description": "FATAL FRAME II: Crimson Butterfly remake preserves the original's atmosphere and slow-burn terror.",
+        "link": "https://konamistyle.com/"
+      }
+    ]
+  },
+  {
+    "name": "Crimson Desert",
+    "slug": "crimson-desert",
+    "platforms": ["steam", "xbox", "ps5"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Game Release",
+        "type": "major_update",
+        "date": "2026-03-19",
+        "confirmed": true,
+        "description": "Pearl Abyss' singleplayer action RPG Crimson Desert.",
+        "link": "https://www.pearlabyss.com/"
+      }
+    ]
+  },
+  {
+    "name": "Tides of Tomorrow",
+    "slug": "tides-of-tomorrow",
+    "platforms": ["ps5"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Game Release",
+        "type": "major_update",
+        "date": "2026-04-22",
+        "confirmed": true,
+        "description": "Ocean planet exploration game where player interactions impact each other's worlds.",
+        "link": "https://www.playstation.com/"
+      }
+    ]
+  },
+  {
+    "name": "Goat Simulator 3",
+    "slug": "goat-simulator-3",
+    "platforms": ["switch"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Switch Release",
+        "type": "major_update",
+        "date": "2026-04-01",
+        "confirmed": true,
+        "description": "Goat Simulator 3 releases on Nintendo Switch.",
+        "link": "https://www.goatsimulator.com/"
+      }
+    ]
+  },
+  {
+    "name": "Tomodachi Life: Living the Dream",
+    "slug": "tomodachi-life",
+    "platforms": ["switch"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Game Release",
+        "type": "major_update",
+        "date": "2026-04-16",
+        "confirmed": true,
+        "description": "Quirky life sim where players observe and interfere with the lives of Miis on a remote island.",
+        "link": "https://www.nintendo.com/"
+      }
+    ]
+  },
+  {
+    "name": "Killing Floor 3",
+    "slug": "killing-floor-3",
+    "platforms": ["xbox", "ps5", "steam"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Season 3: Operation Deep Freeze",
+        "type": "new_season",
+        "date": "2026-03-30",
+        "confirmed": true,
+        "description": "Ice-covered Season 3 introduces Wolverine-like claws. Available on PC, PlayStation, and Xbox.",
+        "link": "https://www.tripwireinteractive.com/"
+      }
+    ]
+  },
+  {
+    "name": "Masters of Albion",
+    "slug": "masters-of-albion",
+    "platforms": ["steam"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Game Release",
+        "type": "major_update",
+        "date": "2026-04-15",
+        "confirmed": false,
+        "description": "City builder/god game where you build a medieval community by day while facing monsters laying siege by night.",
+        "link": "https://www.pcgamer.com/"
+      }
+    ]
+  },
+  {
+    "name": "High On Life 2",
+    "slug": "high-on-life-2",
+    "platforms": ["switch"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Game Release",
+        "type": "major_update",
+        "date": "2026-04-20",
+        "confirmed": true,
+        "description": "Sequel to High On Life releases on April 20, 2026.",
+        "link": "https://www.devolver.com/"
+      }
+    ]
+  },
+  {
+    "name": "Directive 8020",
+    "slug": "directive-8020",
+    "platforms": ["ps5"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Game Release",
+        "type": "major_update",
+        "date": "2026-05-12",
+        "confirmed": true,
+        "description": "Latest cinematic sci-fi horror entry in The Dark Pictures Anthology.",
+        "link": "https://www.supermassivegames.com/"
+      }
+    ]
+  },
+  {
+    "name": "Neverness to Everness",
+    "slug": "neverness-to-everness",
+    "platforms": ["ps5"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Game Release",
+        "type": "major_update",
+        "date": "2026-04-29",
+        "confirmed": true,
+        "description": "Free-to-play open world action-RPG with gacha system, anime-styled Grand Theft Auto.",
+        "link": "https://www.playstation.com/"
+      }
+    ]
+  },
+  {
+    "name": "Fable",
+    "slug": "fable",
+    "platforms": ["xbox", "steam", "ps5"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Game Release",
+        "type": "major_update",
+        "date": "2026-10-01",
+        "confirmed": false,
+        "description": "Upcoming Fable reboot coming in Autumn 2026 to Xbox Series X/S, Xbox on PC, Xbox Cloud, Steam, and PlayStation 5.",
+        "link": "https://www.obsidian.net/"
+      }
+    ]
+  },
+  {
+    "name": "Mixtape",
+    "slug": "mixtape",
+    "platforms": ["ps5", "switch"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Game Release",
+        "type": "major_update",
+        "date": "2026-05-07",
+        "confirmed": true,
+        "description": "Narrative-driven adventure focused on teenage rebellion and a curated soundtrack.",
+        "link": "https://www.nosebleed.games/"
+      }
+    ]
+  },
+  {
+    "name": "Saros",
+    "slug": "saros",
+    "platforms": ["ps5"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "PS5 Exclusive Launch",
+        "type": "major_update",
+        "date": "2026-04-30",
+        "confirmed": true,
+        "description": "PS5 exclusive from Housemarque, evolution of Returnal with bullet hell-style combat and sci-fi narrative.",
+        "link": "https://www.housemarque.com/"
+      }
+    ]
+  },
+  {
+    "name": "Yoshi and the Mysterious Book",
+    "slug": "yoshi-mysterious-book",
+    "platforms": ["switch"],
+    "image_url": null,
+    "last_updated": "2026-03-30T00:00:00Z",
+    "events": [
+      {
+        "title": "Game Release",
+        "type": "major_update",
+        "date": "2026-05-21",
+        "confirmed": true,
+        "description": "Yoshi and the Mysterious Book comes to Switch.",
+        "link": "https://www.nintendo.com/"
+      }
+    ]
+  }
+]
