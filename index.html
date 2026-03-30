@@ -524,6 +524,73 @@ body::before {
   line-height: 1;
 }
 .modal-close:hover { opacity: 0.7; }
+.welcome-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+}
+.welcome-modal-overlay.open { display: flex; }
+@keyframes welcomeFadeIn {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.welcome-modal-content {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  box-shadow: var(--shadow-card);
+  max-width: 440px;
+  width: calc(100% - 32px);
+  padding: 32px 28px 24px;
+  position: relative;
+  text-align: center;
+  animation: welcomeFadeIn 0.25s ease;
+}
+.welcome-modal-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+.welcome-modal-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+.welcome-modal-body {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+.welcome-modal-cta {
+  display: inline-block;
+  background: var(--accent-primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.welcome-modal-cta:hover { opacity: 0.88; }
+.welcome-modal-skip {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.welcome-modal-skip:hover { opacity: 0.7; }
 .modal-title {
   font-family: var(--font-display);
   font-size: 1.2rem;
@@ -740,6 +807,21 @@ body::before {
     </div>
     <div class="pill-group" id="game-picker"></div>
   </section>
+</div>
+
+<!-- Welcome Modal -->
+<div id="welcome-modal" class="welcome-modal-overlay" onclick="closeWelcomeModal(event)">
+  <div class="welcome-modal-content" onclick="event.stopPropagation()">
+    <div class="welcome-modal-icon">🎮</div>
+    <h2 class="welcome-modal-title">Welcome to Game Event Calendar</h2>
+    <p class="welcome-modal-body">
+      Track in-game events, season launches, and DLC releases for the games you play.
+      Pick your games to see what&rsquo;s coming up.
+    </p>
+    <button class="welcome-modal-cta" onclick="closeWelcomeModal(); openDrawer();">Choose My Games</button>
+    <br>
+    <button class="welcome-modal-skip" onclick="closeWelcomeModal()">Skip for now</button>
+  </div>
 </div>
 
 <!-- Detail Modal -->
@@ -1027,10 +1109,21 @@ function closeDetail(e) {
 }
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
-    if (document.getElementById('drawer-panel').classList.contains('open')) closeDrawer();
+    if (document.getElementById('welcome-modal').classList.contains('open')) closeWelcomeModal();
+    else if (document.getElementById('drawer-panel').classList.contains('open')) closeDrawer();
     else closeDetail();
   }
 });
+
+// ===== Welcome Modal =====
+function showWelcomeModal() {
+  document.getElementById('welcome-modal').classList.add('open');
+}
+function closeWelcomeModal(e) {
+  if (!e || e.target === document.getElementById('welcome-modal')) {
+    document.getElementById('welcome-modal').classList.remove('open');
+  }
+}
 
 // ===== Settings Drawer =====
 function openDrawer() {
@@ -1087,6 +1180,7 @@ async function init() {
   // First visit: selectedGames stays empty (nothing selected)
 
   renderAll();
+  if (isFirstVisit) showWelcomeModal();
 }
 
 init();
